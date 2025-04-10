@@ -167,8 +167,11 @@ CodeGenTargetMachineImpl::createMCStreamer(raw_pwrite_stream &Out,
         Options.MCOptions.OutputAsmVariant.value_or(MAI.getAssemblerDialect()),
         MAI, MII, MRI);
     for (StringRef Opt : Options.MCOptions.InstPrinterOptions)
-      if (!InstPrinter->applyTargetSpecificCLOption(Opt))
+      if (!InstPrinter->applyTargetSpecificCLOption(Opt)) {
+        delete InstPrinter;
         return createStringError("invalid InstPrinter option '" + Opt + "'");
+      }
+        
 
     // Create a code emitter if asked to show the encoding.
     std::unique_ptr<MCCodeEmitter> MCE;
